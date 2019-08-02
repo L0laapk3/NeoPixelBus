@@ -96,7 +96,57 @@ License along with NeoPixel.  If not, see
 #endif
 
 
-template<typename T_COLOR_FEATURE, typename T_METHOD> class NeoPixelBus
+class INeoPixelBus {
+public:
+
+    virtual NeoPixelBus(uint16_t countPixels, uint8_t pin) = 0;
+    virtual NeoPixelBus(uint16_t countPixels, uint8_t pinClock, uint8_t pinData) = 0;
+    virtual NeoPixelBus(uint16_t countPixels) = 0;
+
+    virtual ~NeoPixelBus() = 0;
+
+    virtual operator NeoBufferContext<T_COLOR_FEATURE>()
+    virtual {
+        virtual Dirty(); // we assume you are playing with bits
+        virtual return NeoBufferContext<T_COLOR_FEATURE>(_method.getPixels(), _method.getPixelsSize());
+    virtual }
+
+    virtual void Begin() = 0;
+    virtual void Begin(int8_t sck, int8_t miso, int8_t mosi, int8_t ss) = 0;
+
+    virtual void Show(bool maintainBufferConsistency = true) = 0;
+
+    virtual inline bool CanShow() const = 0;
+    virtual bool IsDirty() const = 0;
+    virtual void Dirty() = 0;
+    virtual void ResetDirty() = 0;
+
+    virtual uint8_t* Pixels() = 0;
+    
+    virtual size_t PixelsSize() const = 0;
+    virtual size_t PixelSize() const = 0;
+    virtual uint16_t PixelCount() const = 0;
+
+    virtual void SetPixelColor(uint16_t indexPixel, typename T_COLOR_FEATURE::ColorObject color) = 0;
+
+    virtual typename T_COLOR_FEATURE::ColorObject GetPixelColor(uint16_t indexPixel) const = 0;
+
+    virtual void ClearTo(typename T_COLOR_FEATURE::ColorObject color) = 0;
+    virtual void ClearTo(typename T_COLOR_FEATURE::ColorObject color, uint16_t first, uint16_t last) = 0;
+
+    virtual void RotateLeft(uint16_t rotationCount) = 0;
+    virtual void RotateLeft(uint16_t rotationCount, uint16_t first, uint16_t last) = 0
+    virtual void ShiftLeft(uint16_t shiftCount) = 0;
+    virtual void ShiftLeft(uint16_t shiftCount, uint16_t first, uint16_t last) = 0;
+    virtual void RotateRight(uint16_t rotationCount) = 0;
+    virtual void RotateRight(uint16_t rotationCount, uint16_t first, uint16_t last) = 0;
+    virtual void ShiftRight(uint16_t shiftCount) = 0;
+    virtual void ShiftRight(uint16_t shiftCount, uint16_t first, uint16_t last) = 0;
+    
+    virtual void SwapPixelColor(uint16_t indexPixelOne, uint16_t indexPixelTwo) = 0;
+}
+
+template<typename T_COLOR_FEATURE, typename T_METHOD> class NeoPixelBus : INeoPixelBus
 {
 public:
     // Constructor: number of LEDs, pin number
